@@ -2,6 +2,7 @@ import { GitHubOrgList } from './components/github-org-list';
 
 export default async function Home() {
   const headers = { Authorization: `Bearer ${process.env.GH_TOKEN}` };
+  console.log('GH_TOKEN', process.env.GH_TOKEN)
 
   // Fetch user's organizations dynamically
   const fetchOrganizations = async () => {
