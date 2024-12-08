@@ -49,8 +49,8 @@ export function GitHubRepo({ repo }: GitHubRepoProps) {
                     <div className="flex -space-x-1 overflow-hidden">
                         {repo.contributors &&
                             repo.contributors.map((contributor: any) => (
-                                <Link target="_blank" href={contributor.html_url}>
-                                <Avatar key={contributor.id} title={contributor.login} className="inline-block h-8 w-8 rounded-full shadow-sm shadow-black">
+                                <Link key={contributor.id} target="_blank" href={contributor.html_url}>
+                                <Avatar title={contributor.login} className="inline-block h-8 w-8 rounded-full shadow-sm shadow-black">
                                     <AvatarImage src={contributor.avatar_url} alt={contributor.login} />
                                     <AvatarFallback>{contributor.login?.slice(0, 2).toUpperCase()}</AvatarFallback>
                                 </Avatar>
