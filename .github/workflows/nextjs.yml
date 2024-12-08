@@ -27,6 +27,7 @@ concurrency:
 # set a global environment variable GH_TOKEN
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   # Build job
