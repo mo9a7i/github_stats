@@ -24,6 +24,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+# set a global environment variable GH_TOKEN
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   # Build job
   build:
