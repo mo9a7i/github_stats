@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GitHubRepo } from "./github-repo";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -25,10 +26,13 @@ export function GitHubOrg({ org }: GitHubOrgProps) {
         <AccordionItem value={org.login}>
             <AccordionTrigger>
                 <div className="text-start pe-6 w-full text-xl flex justify-between font-medium items-center">
+                    <div className="flex items-center gap-2">
+                    <Image src={org.avatar_url} alt={org.login} width={64} height={64} className="rounded-lg shadow-md" />
                     <span>
                         {org.name || "No Name"} {/* Fallback to login if name is not available */}
                         <small className="text-gray-500">@{org.login}</small>
-                    </span>{" "}
+                    </span>
+                    </div>
                     <small className="text-sm text-gray-500">{repoCountStr}</small>
                 </div>
             </AccordionTrigger>
