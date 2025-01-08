@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GitBranch, GitPullRequest, Eye, Star, AlertCircle, GitCommit, Clock } from "lucide-react";
+import { GitBranch, GitPullRequest, Star, AlertCircle, GitCommit, Clock } from "lucide-react";
 import Link from "next/link";
 import { GitHubRepo as GitHubRepoType } from "@/app/types/github";
 
@@ -18,7 +18,7 @@ export function GitHubRepo({ repo }: GitHubRepoProps) {
     };
 
     return (
-        <Card className="overflow-hidden text-gray-700 flex flex-col h-full">
+        <Card className="overflow-hidden text-gray-700 flex flex-col h-full dark:bg-[#040113] dark:border-[#0c0339]">
             <CardHeader className="relative lg:py-2 lg:pb-0 px-4 lg:gap-2 lg:flex lg:flex-col">
                 <CardTitle className="text-lg m-0 p-0 truncate">
                     <Link target="_blank" href={repo.html_url}>
@@ -32,12 +32,12 @@ export function GitHubRepo({ repo }: GitHubRepoProps) {
                         {formatDate(repo.pushed_at)}
                     </span>
                     {repo.language && (
-                        <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
+                        <span className="text-xs bg-gray-100 text-gray-700 dark:bg-[#0a032d] dark:border-[#11044f] px-2 py-0.5 rounded">
                             {repo.language}
                         </span>
                     )}
                     {repo.topics?.map(topic => (
-                        <span key={topic} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                        <span key={topic} className="text-xs bg-blue-100 text-blue-700 dark:bg-[#0a032d] dark:border-[#11044f] px-2 py-0.5 rounded">
                             {topic}
                         </span>
                     ))}
@@ -50,13 +50,9 @@ export function GitHubRepo({ repo }: GitHubRepoProps) {
                         <GitCommit className="mr-2 h-4 w-4" />
                         <span>{repo.commits_count || "Unknown commits"}</span>
                     </div>
-                    <div title="pulls" className={`flex items-center lg:justify-end ${!repo.open_issues_count ? "text-gray-200" : ""}`}>
+                    <div title="pulls" className={`flex items-center lg:justify-end ${!repo.open_issues ? "text-gray-200" : ""}`}>
                         <GitPullRequest className="mr-1 h-3 w-3" />
-                        <span>{repo.open_issues_count || 0}</span>
-                    </div>
-                    <div title="subscribers" className={`flex items-center lg:justify-end ${!repo.subscribers_count ? "text-gray-200" : ""}`}>
-                        <Eye className="mr-1 h-3 w-3" />
-                        <span>{repo.subscribers_count || 0}</span>
+                        <span>{repo.open_issues || 0}</span>
                     </div>
                     <div title="stars" className={`flex items-center lg:justify-end ${!repo.stargazers_count  ? "text-gray-200" : ""}`}>
                         <Star className="mr-1 h-3 w-3" />

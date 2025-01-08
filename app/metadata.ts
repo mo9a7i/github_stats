@@ -41,8 +41,6 @@ const defaultMetadata: Metadata = {
     }
   },
   manifest: `${getBasePath()}/site.webmanifest`,
-  themeColor: '#ffffff',
-  viewport: 'width=device-width, initial-scale=1',
   applicationName: process.env.NEXT_PUBLIC_APP_NAME
 };
 

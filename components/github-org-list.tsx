@@ -6,8 +6,9 @@ import { Accordion } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface GitHubOrgListProps {
   orgsData: GitHubOrgType[];
@@ -17,6 +18,15 @@ interface GitHubOrgListProps {
 export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps) {
   const [sortBy, setSortBy] = useState("pushed");
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedOrgs, setExpandedOrgs] = useState<string[]>([]);
+
+  const toggleAllOrgs = () => {
+    if (expandedOrgs.length) {
+      setExpandedOrgs([]);
+    } else {
+      setExpandedOrgs(filteredAndSortedOrgs.map(org => org.login));
+    }
+  };
 
   const filterRepos = (org: GitHubOrgType) => {
     const query = searchQuery.toLowerCase();
@@ -81,36 +91,68 @@ export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps)
     // Sort organizations by filtered repo count
     .sort((a, b) => b.repos.length - a.repos.length);
 
-  // Get the login of the first organization (most repos)
-  const firstOrgId = filteredAndSortedOrgs[0]?.login;
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-4">
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="name">Name</SelectItem>
-            <SelectItem value="pushed">Last Pushed</SelectItem>
-            <SelectItem value="stars">Stars</SelectItem>
-            <SelectItem value="forks">Forks</SelectItem>
-            <SelectItem value="commits">Commits</SelectItem>
-          </SelectContent>
-        </Select>
-        <div className="relative flex-1 max-w-md ml-auto">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-500" />
-          <Input
-            placeholder="Search repositories, languages, topics..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-      </div>
 
-      <Accordion type="multiple" defaultValue={[firstOrgId]}>
+      <Card className="p-4 mb-6 bg-gray-50 dark:bg-[#040113] dark:border-[#0c0339]">
+        <div className="flex flex-col items-center md:flex-row gap-4">
+          <button
+            onClick={toggleAllOrgs}
+            className="p-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-[#0a032d] transition-colors flex items-center gap-2 text-sm text-muted-foreground"
+            title={expandedOrgs.length ? "Collapse all" : "Expand all"}
+          >
+            {expandedOrgs.length ? (
+              <>
+                <ChevronUp className="h-4 w-4" />
+                <span>Collapse all</span>
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-4 w-4" />
+                <span>Expand all</span>
+              </>
+            )}
+          </button>
+
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full md:w-[140px] dark:bg-[#0a032d] dark:border-[#11044f]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent className="dark:bg-[#0a032d] dark:border-[#11044f]">
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="pushed">Last Pushed</SelectItem>
+                <SelectItem value="stars">Stars</SelectItem>
+                <SelectItem value="forks">Forks</SelectItem>
+                <SelectItem value="commits">Commits</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="relative flex-1 w-full md:max-w-md md:ml-auto">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground " />
+            <Input
+              placeholder="Search repositories, languages, topics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9  dark:bg-[#0a032d] dark:border-[#11044f]"
+            />
+          </div>
+          <div className="text-sm text-muted-foreground whitespace-nowrap text-center md:text-left">
+            <span suppressHydrationWarning>
+              {filteredAndSortedOrgs.reduce((sum, org) => sum + org.repos.length, 0)} repositories
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      <Accordion 
+        type="multiple" 
+        value={expandedOrgs}
+        onValueChange={setExpandedOrgs}
+      >
         {filteredAndSortedOrgs.map((org, index) => (
           <GitHubOrg key={`org-${index}-${org.login}`} org={org} />
         ))}

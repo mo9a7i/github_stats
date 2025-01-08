@@ -15,5 +15,18 @@ body {
 @layer base {
   :root {
     --radius: 0.5rem;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
   }
 }

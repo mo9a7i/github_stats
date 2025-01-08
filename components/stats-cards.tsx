@@ -1,7 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {  Star, GitBranch, Users, GitCommit } from "lucide-react"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import Link from "next/link";
+import { 
+  LanguagesCard, 
+  RepositoriesCard, 
+  StarsCard,
+  OrganizationsCard,
+  ContributorsCard,
+  CommitsCard,
+  IssuesCard,
+  LanguageBytesCard,
+  DevelopmentTimeCard,
+  CoffeeCupsCard
+} from "./cards"
 
 interface StatsCardsProps {
   stats: {
@@ -10,6 +18,7 @@ interface StatsCardsProps {
     privateRepos: number;
     totalStars: number;
     totalForks: number;
+    totalIssues: number;
     totalContributors: number;
     totalCommits: number;
     lastUpdated: string;
@@ -22,108 +31,62 @@ interface StatsCardsProps {
       login: string;
       avatar_url: string;
     }>;
+    languages: Array<{
+      name: string;
+      count: number;
+      percentage: number;
+    }>;
+    languageBytes: {
+      languages: Array<{
+        name: string;
+        bytes: number;
+        percentage: number;
+        color?: string;
+      }>;
+      totalBytes: number;
+    };
+    developmentStats: {
+      totalLines: number;
+      totalHours: number;
+    };
   };
 }
 
 export function StatsCards({ stats }: StatsCardsProps) {
-  const AVATAR_SIZE = "h-8 w-8";
-  const AVATAR_GROUP_CLASS = "flex flex-wrap -space-x-2 mt-2 overflow-visible";
-  const AVATAR_CLASS = `inline-block ${AVATAR_SIZE} rounded-full ring-2 ring-white hover:ring-neutral-200 transition-all bg-neutral-800`;
-
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Repositories</CardTitle>
-          <GitBranch className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalRepos}</div>
-          <p className="text-xs text-muted-foreground">
-            {stats.publicRepos} public, {stats.privateRepos} private
-          </p>
-        </CardContent>
-      </Card>
+      <RepositoriesCard 
+        totalRepos={stats.totalRepos}
+        publicRepos={stats.publicRepos}
+        privateRepos={stats.privateRepos}
+      />
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Stars</CardTitle>
-          <Star className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalStars}</div>
-          <p className="text-xs text-muted-foreground">
-            Across all repositories
-          </p>
-        </CardContent>
-      </Card>
+      <StarsCard totalStars={stats.totalStars} />
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Organizations</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.organizations.length}</div>
-          <div className={AVATAR_GROUP_CLASS}>
-            {stats.organizations.map((org) => (
-              <Link
-                key={org.login}
-                href={`https://github.com/${org.login}`}
-                target="_blank"
-              >
-                <Avatar
-                  title={org.name || org.login}
-                  className={AVATAR_CLASS}
-                >
-                  <AvatarImage src={org.avatar_url} alt={org.login} />
-                  <AvatarFallback>{org.login.slice(0, 2).toUpperCase()}</AvatarFallback>
-                </Avatar>
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <OrganizationsCard organizations={stats.organizations} />
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Contributors</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalContributors}</div>
-          <div className={AVATAR_GROUP_CLASS}>
-            {stats.contributors.map((contributor) => (
-              <Link
-                key={contributor.login}
-                href={`https://github.com/${contributor.login}`}
-                target="_blank"
-              >
-                <Avatar
-                  title={contributor.login}
-                  className={AVATAR_CLASS}
-                >
-                  <AvatarImage src={contributor.avatar_url} alt={contributor.login} />
-                  <AvatarFallback>{contributor.login.slice(0, 2).toUpperCase()}</AvatarFallback>
-                </Avatar>
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ContributorsCard 
+        totalContributors={stats.totalContributors}
+        contributors={stats.contributors}
+      />
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Commits</CardTitle>
-          <GitCommit className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalCommits}</div>
-          <p className="text-xs text-muted-foreground">
-            Last updated {new Date(stats.lastUpdated).toLocaleDateString()}
-          </p>
-        </CardContent>
-      </Card>
+      <CommitsCard 
+        totalCommits={stats.totalCommits}
+        lastUpdated={stats.lastUpdated}
+      />
+
+      <IssuesCard totalIssues={stats.totalIssues} />
+
+      <LanguagesCard languages={stats.languages} />
+
+      <LanguageBytesCard 
+        languages={stats.languageBytes.languages}
+        totalBytes={stats.languageBytes.totalBytes}
+      />
+
+      <DevelopmentTimeCard totalLines={stats.developmentStats.totalLines} />
+
+      <CoffeeCupsCard totalHours={stats.developmentStats.totalHours} />
     </div>
   )
 } 

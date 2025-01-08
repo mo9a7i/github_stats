@@ -2,9 +2,23 @@ import { GitHubOrgList } from '../components/github-org-list';
 import { getCache, setCache } from '@/lib/cache';
 import { Suspense } from 'react';
 import { StatsCards } from '@/components/stats-cards';
-import { GitHubRepo } from './types/github';
+import { GitHubRepo, LanguageLinesStats } from './types/github';
 import { Metadata } from 'next';
 import defaultMetadata from './metadata';
+import { ThemeToggle } from '@/components/theme-toggle';
+
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
+  Python: "#3572A5",
+  HTML: "#e34c26",
+  Vue: "#41b883",
+  Astro: "#f0f0f0",
+  PHP: "#4F5D95",
+  Java: "#b07219",
+  "C#": "#178600",
+  Other: "#6e7681"
+};
 
 // Add configuration type
 interface GitHubConfig {
@@ -165,9 +179,9 @@ export default async function Home() {
       // For users, we need to fetch all repos (including private ones if token has access)
       const reposUrl = isUser 
         ? userData.login === org 
-            ? `${config.baseUrl}/user/repos?per_page=100&type=owner&sort=updated`  // For authenticated user
+            ? `${config.baseUrl}/user/repos?per_page=100&affiliation=owner&sort=updated`  // For authenticated user
             : `${config.baseUrl}/users/${org}/repos?per_page=100&type=owner&sort=updated`  // For other users
-        : `${config.baseUrl}/orgs/${org}/repos?per_page=100`;
+        : `${config.baseUrl}/orgs/${org}/repos?per_page=100&type=all`;
 
       const [orgResponse, reposResponse] = await Promise.all([
         isUser 
@@ -180,6 +194,12 @@ export default async function Home() {
         orgResponse.json(),
         reposResponse.json()
       ]);
+
+      // Add error handling for reposData
+      if (!Array.isArray(reposData)) {
+        console.error(`Invalid repos data for ${org}:`, reposData);
+        return { ...orgData, repos: [] };
+      }
 
       console.log(`Fetched ${reposData.length} repositories for ${isUser ? 'user' : 'org'} ${org}`);
 
@@ -194,12 +214,17 @@ export default async function Home() {
               return cachedRepoData;
             }
 
-            const [contributorsResponse, commitsResponse] = await Promise.all([
+            const [contributorsResponse, commitsResponse, languagesResponse] = await Promise.all([
               fetch(repo.contributors_url, { headers: config.headers }),
-              fetch(`${repo.url}/commits?per_page=1`, { headers: config.headers })
+              fetch(`${repo.url}/commits?per_page=1`, { headers: config.headers }),
+              fetch(repo.languages_url, { headers: config.headers })
             ]);
 
-            const contributorsData = await contributorsResponse.json();
+            const [contributorsData, languagesData] = await Promise.all([
+              contributorsResponse.json(),
+              languagesResponse.json()
+            ]);
+
             const commitsLinkHeader = commitsResponse.headers.get("Link");
             let commitsCount = null;
 
@@ -214,6 +239,7 @@ export default async function Home() {
               ...repo,
               contributors: Array.isArray(contributorsData) ? contributorsData.slice(0, 5) : [],
               commits_count: commitsCount,
+              languages_stats: languagesData
             };
 
             // Cache individual repo data
@@ -266,46 +292,124 @@ export default async function Home() {
     const totalPrivateRepos = orgsData.reduce((sum, org) => sum + (org.total_private_repos || 0), 0);
     const totalRepos = totalPublicRepos + totalPrivateRepos;
   
-  // Calculate total stats
-  const totalStats = {
-    totalRepos,
-    publicRepos: totalPublicRepos,
-    privateRepos: totalPrivateRepos,
-    totalStars: orgsData.reduce((sum, org) => 
-      sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + repo.stargazers_count, 0), 0
-    ),
-    totalForks: orgsData.reduce((sum, org) => 
-      sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + repo.forks_count, 0), 0
-    ),
-    organizations: orgsData.map(org => ({
-      login: org.login,
-      avatar_url: org.avatar_url,
-      name: org.name || org.login
-    })),
-    contributors: Array.from(new Set(
-      orgsData.flatMap(org => 
-        org.repos.flatMap((repo: GitHubRepo) => repo.contributors)
-      ).map(c => JSON.stringify({ login: c.login, avatar_url: c.avatar_url }))
-    )).map(str => JSON.parse(str)),
-    totalContributors: new Set(
-      orgsData.flatMap((org: any) => 
-        org.repos.flatMap((repo: GitHubRepo) => repo.contributors.map(c => c.login))
+    // Calculate total lines stats
+    const languageBytesStats = orgsData.reduce((stats: Record<string, number>, org) => {
+      org.repos.forEach((repo: GitHubRepo) => {
+        if (repo.languages_stats) {
+          Object.entries(repo.languages_stats).forEach(([lang, bytes]) => {
+            stats[lang] = (stats[lang] || 0) + bytes;
+          });
+        }
+      });
+      return stats;
+    }, {});
+
+    const totalBytes = Object.values(languageBytesStats).reduce((sum, bytes) => sum + bytes, 0);
+    const BYTES_PER_LINE = 120; // Average line length estimation
+    const LINES_PER_HOUR = 50 / 8; // 50 lines per day (8 hours)
+    const totalLines = Math.round(totalBytes / BYTES_PER_LINE);
+    const totalHours = Math.round(totalLines / LINES_PER_HOUR);
+
+    function createLanguageStats(
+      name: string,
+      bytes: number,
+      percentage: number,
+      color?: string
+    ): LanguageLinesStats {
+      return {
+        name,
+        bytes,
+        lines: Math.round(bytes / BYTES_PER_LINE),
+        percentage,
+        color
+      };
+    }
+
+    // Get top 5 languages by bytes and combine rest into "Others"
+    const topLanguagesByBytes = Object.entries(languageBytesStats)
+      .sort(([, a], [, b]) => b - a)
+      .reduce<LanguageLinesStats[]>((acc, [name, bytes], index) => {
+        if (index < 5) {
+          acc.push(createLanguageStats(name, bytes, (bytes / totalBytes) * 100, LANGUAGE_COLORS[name] || LANGUAGE_COLORS.Other));
+        } else if (index === 5) {
+          const otherBytes = Object.entries(languageBytesStats).slice(5).reduce((sum, [, bytes]) => sum + bytes, 0);
+          acc.push(createLanguageStats('Others', otherBytes, (otherBytes / totalBytes) * 100, LANGUAGE_COLORS.Other));
+        }
+        return acc;
+      }, []);
+
+    // Calculate total stats
+    const totalStats = {
+      totalRepos,
+      publicRepos: totalPublicRepos,
+      privateRepos: totalPrivateRepos,
+      totalStars: orgsData.reduce((sum, org) => 
+        sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + repo.stargazers_count, 0), 0
+      ),
+      totalForks: orgsData.reduce((sum, org) => 
+        sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + repo.forks_count, 0), 0
+      ),
+      totalIssues: orgsData.reduce((sum, org) => 
+        sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + repo.open_issues || 0, 0), 0
+      ),
+      organizations: orgsData.map(org => ({
+        login: org.login,
+        avatar_url: org.avatar_url,
+        name: org.name || org.login
+      })),
+      contributors: Array.from(new Set(
+        orgsData.flatMap(org => 
+          org.repos.flatMap((repo: GitHubRepo) => repo.contributors)
+        ).map(c => JSON.stringify({ login: c.login, avatar_url: c.avatar_url }))
+      )).map(str => JSON.parse(str)),
+      totalContributors: new Set(
+        orgsData.flatMap((org: any) => 
+          org.repos.flatMap((repo: GitHubRepo) => repo.contributors.map(c => c.login))
+        )
+      ).size,
+      totalCommits: orgsData.reduce((sum, org) => 
+        sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + (repo.commits_count || 0), 0), 0
+      ),
+      lastUpdated: new Date().toISOString(),
+      languages: Object.entries(
+        orgsData.reduce((langs: Record<string, number>, org) => {
+          org.repos.forEach((repo: GitHubRepo) => {
+            if (repo.language) {
+              langs[repo.language] = (langs[repo.language] || 0) + 1;
+            }
+          });
+          return langs;
+        }, {})
       )
-    ).size,
-    totalCommits: orgsData.reduce((sum, org) => 
-      sum + org.repos.reduce((repoSum: number, repo: GitHubRepo) => repoSum + (repo.commits_count || 0), 0), 0
-    ),
-    lastUpdated: new Date().toISOString(),
-  };
+      .map(([name, count]) => ({
+        name,
+        count,
+        lines: Math.round(count / BYTES_PER_LINE),
+        percentage: (count / totalRepos) * 100
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5),
+      languageBytes: {
+        languages: topLanguagesByBytes,
+        totalBytes
+      },
+      developmentStats: {
+        totalLines,
+        totalHours
+      }
+    };
 
   return (
     <main className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold mb-8">
-        {process.env.NEXT_PUBLIC_APP_NAME}
-        <small className="block font-thin text-base text-gray-700">
-          {process.env.NEXT_PUBLIC_APP_DESCRIPTION}
-        </small>
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">
+          {process.env.NEXT_PUBLIC_APP_NAME}
+          <small className="block font-thin text-base text-gray-700 dark:text-gray-300">
+            {process.env.NEXT_PUBLIC_APP_DESCRIPTION}
+          </small>
+        </h1>
+        <ThemeToggle />
+      </div>
       <StatsCards stats={totalStats} />
       <Suspense fallback={<GitHubOrgList orgsData={[]} loading={true} />}>
         <GitHubOrgList orgsData={sortedOrgsData} />

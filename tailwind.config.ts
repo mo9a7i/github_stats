@@ -10,7 +10,10 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
-  			background: 'var(--background)',
+  			background: {
+  				DEFAULT: "hsl(var(--background))",
+  				dark: "hsl(222 47% 11%)",
+  			},
   			foreground: 'var(--foreground)'
   		},
   		borderRadius: {
