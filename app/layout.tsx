@@ -5,8 +5,8 @@ import { Github, Twitter } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "6 Degrees Github Stats",
-    description: "6 Degrees Github Stats is a simple web app to show the stats of 6 Degrees Github organization and their repositories.",  
+    title: process.env.NEXT_PUBLIC_APP_NAME || "6 Degrees Github Stats",
+    description: process.env.NEXT_PUBLIC_APP_DESCRIPTION || "6 Degrees Github Stats Dashboard",
 };
 
 export default function RootLayout({

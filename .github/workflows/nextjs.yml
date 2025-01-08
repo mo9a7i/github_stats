@@ -28,6 +28,12 @@ concurrency:
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  NEXT_PUBLIC_APP_NAME: ${{ secrets.NEXT_PUBLIC_APP_NAME  }}
+  NEXT_PUBLIC_APP_DESCRIPTION: ${{ secrets.NEXT_PUBLIC_APP_DESCRIPTION }}
+  CACHE_DURATION: ${{ secrets.CACHE_DURATION }}
+  MAX_REQUESTS_PER_HOUR: ${{ secrets.MAX_REQUESTS_PER_HOUR }}
+  INCLUDED_ORGS: ${{ secrets.INCLUDED_ORGS }}
+  EXCLUDED_ORGS: ${{ secrets.EXCLUDED_ORGS }}
 
 jobs:
   # Build job

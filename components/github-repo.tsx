@@ -1,25 +1,52 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GitBranch, GitPullRequest, Eye, Star, AlertCircle, GitCommit } from "lucide-react";
+import { GitBranch, GitPullRequest, Eye, Star, AlertCircle, GitCommit, Clock } from "lucide-react";
 import Link from "next/link";
+import { GitHubRepo as GitHubRepoType } from "@/app/types/github";
+import { cn } from "@/lib/utils";
 
 interface GitHubRepoProps {
-    repo: any; // Expect the entire repo object as a prop
+    repo: GitHubRepoType;
 }
 
 export function GitHubRepo({ repo }: GitHubRepoProps) {
+    const formatDate = (date: string) => {
+        return new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
+
     return (
-        <Card className="overflow-hidden text-gray-700">
-            <CardHeader className="lg:py-2 lg:pb-0 px-4 lg:gap-2 lg:flex lg:flex-row lg:items-center">
-                <CardTitle className="text-lg m-0 p-0">
+        <Card className="overflow-hidden text-gray-700 flex flex-col h-full">
+            <CardHeader className="relative lg:py-2 lg:pb-0 px-4 lg:gap-2 lg:flex lg:flex-col">
+                <CardTitle className="text-lg m-0 p-0 truncate">
                     <Link target="_blank" href={repo.html_url}>
                         {repo.name}
+                        {repo.private && <span className="ml-2 text-xs bg-amber-200 text-amber-700 px-2 py-0.5 rounded">Private</span>}
                     </Link>
                 </CardTitle>
-                <p className="text-sm text-gray-500 p-0 !mt-0">{repo.description || "No description available."}</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {formatDate(repo.pushed_at)}
+                    </span>
+                    {repo.language && (
+                        <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
+                            {repo.language}
+                        </span>
+                    )}
+                    {repo.topics?.map(topic => (
+                        <span key={topic} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                            {topic}
+                        </span>
+                    ))}
+                </div>
+                <p className="text-sm text-gray-500 p-0 !mt-2 line-clamp-2">{repo.description || "No description available."}</p>
             </CardHeader>
-            <CardContent className="p-4 pt-0 grid gap-2 lg:flex lg:justify-between">
-                <div className="items-end flex lg:grid lg:grid-cols-8 gap-4 lg:gap-2 text-sm">
+            <CardContent className="p-4 pt-0 mt-auto">
+                <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 text-sm">
                     <div title="commits" className={`flex items-center text-sm ${!repo.commits_count ? "text-gray-200" : ""}`}>
                         <GitCommit className="mr-2 h-4 w-4" />
                         <span>{repo.commits_count || "Unknown commits"}</span>
