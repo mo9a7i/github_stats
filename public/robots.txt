@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mo9a7i.github.io/github_stats/sitemap.xml 

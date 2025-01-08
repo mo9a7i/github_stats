@@ -3,6 +3,8 @@ import { getCache, setCache } from '@/lib/cache';
 import { Suspense } from 'react';
 import { StatsCards } from '@/components/stats-cards';
 import { GitHubRepo } from './types/github';
+import { Metadata } from 'next';
+import defaultMetadata from './metadata';
 
 // Add configuration type
 interface GitHubConfig {
@@ -30,6 +32,13 @@ interface GitHubApiUser {
   total_private_repos: number;
   type: 'User';
 }
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  alternates: {
+    canonical: 'https://mo9a7i.github.io/github_stats'
+  }
+};
 
 export default async function Home() {
   // Initialize GitHub configuration
