@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GitBranch, GitPullRequest, Eye, Star, AlertCircle, GitCommit, Clock } from "lucide-react";
 import Link from "next/link";
 import { GitHubRepo as GitHubRepoType } from "@/app/types/github";
-import { cn } from "@/lib/utils";
 
 interface GitHubRepoProps {
     repo: GitHubRepoType;

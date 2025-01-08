@@ -1,5 +1,4 @@
 import { GitHubOrgList } from '../components/github-org-list';
-import { headers } from 'next/headers';
 import { getCache, setCache } from '@/lib/cache';
 import { Suspense } from 'react';
 import { StatsCards } from '@/components/stats-cards';
@@ -137,13 +136,7 @@ export default async function Home() {
   let requestCount = 0;
   const maxRequests = parseInt(process.env.MAX_REQUESTS_PER_HOUR || '5000');
 
-  const makeRequest = async (url: string) => {
-    if (requestCount >= maxRequests) {
-      throw new Error('Rate limit exceeded');
-    }
-    requestCount++;
-    return fetch(url, { headers: config.headers });
-  };
+ 
 
   const fetchOrgData = async (org: string) => {
     try {
@@ -284,7 +277,7 @@ export default async function Home() {
     })),
     contributors: Array.from(new Set(
       orgsData.flatMap(org => 
-        org.repos.flatMap(repo => repo.contributors)
+        org.repos.flatMap((repo: GitHubRepo) => repo.contributors)
       ).map(c => JSON.stringify({ login: c.login, avatar_url: c.avatar_url }))
     )).map(str => JSON.parse(str)),
     totalContributors: new Set(

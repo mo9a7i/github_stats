@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { GitFork, Star, GitBranch, Users, GitCommit, Clock } from "lucide-react"
+import {  Star, GitBranch, Users, GitCommit } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import Link from "next/link";
 
