@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getBasePath } from '@/lib/utils'
 
 const defaultMetadata: Metadata = {
   title: process.env.NEXT_PUBLIC_APP_NAME,
@@ -13,7 +14,7 @@ const defaultMetadata: Metadata = {
     title: process.env.NEXT_PUBLIC_APP_NAME,
     description: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
     siteName: process.env.NEXT_PUBLIC_APP_NAME,
-    url: 'https://mo9a7i.github.io/github_stats',
+    url: `https://mo9a7i.github.io${getBasePath()}`,
     images: [
       {
         url: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
@@ -39,7 +40,7 @@ const defaultMetadata: Metadata = {
       url: 'https://github.githubassets.com/favicons/favicon.png'
     }
   },
-  manifest: '/site.webmanifest',
+  manifest: `${getBasePath()}/site.webmanifest`,
   themeColor: '#ffffff',
   viewport: 'width=device-width, initial-scale=1',
   applicationName: process.env.NEXT_PUBLIC_APP_NAME

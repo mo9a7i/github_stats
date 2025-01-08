@@ -2,7 +2,7 @@
   "name": "GitHub Stats Dashboard",
   "short_name": "GitHub Stats",
   "description": "A comprehensive dashboard for GitHub organization and repository statistics",
-  "start_url": "/",
+  "start_url": "/github_stats/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
