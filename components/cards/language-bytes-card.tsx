@@ -15,7 +15,7 @@ interface LanguageBytesCardProps {
 
 export function LanguageBytesCard({ languages, totalBytes }: LanguageBytesCardProps) {
   return (
-    <Card className="bg-gray-50 dark:bg-[#040113] dark:border-[#0c0339] col-span-2">
+    <Card className="bg-gray-50 dark:bg-[#040113] dark:border-[#0c0339] md:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Lines of Code</CardTitle>
         <Code className="h-4 w-4 text-muted-foreground" />
