@@ -133,8 +133,6 @@ export default async function Home() {
   };
 
   // Add rate limiting tracking
-  let requestCount = 0;
-  const maxRequests = parseInt(process.env.MAX_REQUESTS_PER_HOUR || '5000');
 
  
 
