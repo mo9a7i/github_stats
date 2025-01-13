@@ -160,7 +160,7 @@ export function GitHubOrgList({ orgsData, loading = false, stats }: GitHubOrgLis
               }`}
             >
               <Globe className="h-3 w-3" />
-              All Pages
+              All
             </button>
             <button
               onClick={() => setHomepageFilter('source')}
@@ -169,7 +169,7 @@ export function GitHubOrgList({ orgsData, loading = false, stats }: GitHubOrgLis
               }`}
             >
               <Code className="h-3 w-3" />
-              Source Pages
+              Source
             </button>
             <button
               onClick={() => setHomepageFilter('fork')}
@@ -178,7 +178,7 @@ export function GitHubOrgList({ orgsData, loading = false, stats }: GitHubOrgLis
               }`}
             >
               <GitFork className="h-3 w-3" />
-              Fork Pages
+              Forked
             </button>
           </div>
 
@@ -234,9 +234,9 @@ export function GitHubOrgList({ orgsData, loading = false, stats }: GitHubOrgLis
         onValueChange={setExpandedOrgs}
       >
         {filteredAndSortedOrgs.map((org, index) => (
-          <GitHubOrg key={`org-${index}-${org.login}`} org={org} />
-        ))}
-      </Accordion>
+        <GitHubOrg key={`org-${index}-${org.login}`} org={org} />
+      ))}
+    </Accordion>
     </>
   );
 }
