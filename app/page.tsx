@@ -396,7 +396,20 @@ export default async function Home() {
       developmentStats: {
         totalLines,
         totalHours
-      }
+      },
+      homepages: orgsData.flatMap(org => 
+        org.repos
+          .filter((repo: GitHubRepo) => repo.has_pages || repo.homepage)
+          .map((repo: GitHubRepo) => ({
+            name: repo.name,
+            url: repo.has_pages 
+              ? `https://${repo.owner.login}.github.io/${repo.name}/`
+              : repo.homepage,
+            isGitHubPages: repo.has_pages,
+            orgName: org.name || org.login,
+            isFork: repo.fork
+          }))
+      ),
     };
 
   return (
@@ -411,8 +424,8 @@ export default async function Home() {
         <ThemeToggle />
       </div>
       <StatsCards stats={totalStats} />
-      <Suspense fallback={<GitHubOrgList orgsData={[]} loading={true} />}>
-        <GitHubOrgList orgsData={sortedOrgsData} />
+      <Suspense fallback={<GitHubOrgList orgsData={[]} loading={true} stats={{ homepages: [] }} />}>
+        <GitHubOrgList orgsData={sortedOrgsData} stats={totalStats} />
       </Suspense>
     </main>
   );

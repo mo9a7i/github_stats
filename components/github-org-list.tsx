@@ -6,18 +6,29 @@ import { Accordion } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Globe, Code, GitFork } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { HomepagesCard } from "@/components/cards";
 
 interface GitHubOrgListProps {
   orgsData: GitHubOrgType[];
   loading?: boolean;
+  stats: {
+    homepages: Array<{
+      name: string;
+      url: string;
+      isGitHubPages: boolean;
+      orgName: string;
+      isFork: boolean;
+    }>;
+  };
 }
 
-export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps) {
+export function GitHubOrgList({ orgsData, loading = false, stats }: GitHubOrgListProps) {
   const [sortBy, setSortBy] = useState("pushed");
   const [searchQuery, setSearchQuery] = useState("");
+  const [homepageFilter, setHomepageFilter] = useState<'all' | 'source' | 'fork'>('all');
   const [expandedOrgs, setExpandedOrgs] = useState<string[]>([]);
 
   const toggleAllOrgs = () => {
@@ -30,17 +41,27 @@ export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps)
 
   const filterRepos = (org: GitHubOrgType) => {
     const query = searchQuery.toLowerCase();
+    const isMatchingSearch = (text?: string | null) => text?.toLowerCase().includes(query) || false;
+    
     return {
       ...org,
       repos: org.repos.filter(repo => {
-        return (
-          repo.name.toLowerCase().includes(query) ||
-          repo.description?.toLowerCase().includes(query) ||
-          repo.language?.toLowerCase().includes(query) ||
-          repo.topics?.some(topic => topic.toLowerCase().includes(query)) ||
-          org.name?.toLowerCase().includes(query) ||
-          org.login.toLowerCase().includes(query)
-        );
+        // Filter by search query
+        const matchesSearch = 
+          isMatchingSearch(repo.name) ||
+          isMatchingSearch(repo.description) ||
+          isMatchingSearch(repo.language) ||
+          repo.topics?.some(topic => isMatchingSearch(topic)) ||
+          isMatchingSearch(org.name) ||
+          isMatchingSearch(org.login);
+          
+        // Filter by homepage type
+        const matchesHomepageFilter = 
+          homepageFilter === 'all' ||
+          (homepageFilter === 'source' && !repo.fork) ||
+          (homepageFilter === 'fork' && repo.fork);
+
+        return matchesSearch && matchesHomepageFilter;
       })
     };
   };
@@ -131,6 +152,36 @@ export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps)
             </Select>
           </div>
 
+          <div className="flex gap-2">
+            <button
+              onClick={() => setHomepageFilter('all')}
+              className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 ${
+                homepageFilter === 'all' ? 'bg-neutral-200 dark:bg-neutral-800' : 'hover:bg-neutral-100 dark:hover:bg-neutral-900'
+              }`}
+            >
+              <Globe className="h-3 w-3" />
+              All Pages
+            </button>
+            <button
+              onClick={() => setHomepageFilter('source')}
+              className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 ${
+                homepageFilter === 'source' ? 'bg-neutral-200 dark:bg-neutral-800' : 'hover:bg-neutral-100 dark:hover:bg-neutral-900'
+              }`}
+            >
+              <Code className="h-3 w-3" />
+              Source Pages
+            </button>
+            <button
+              onClick={() => setHomepageFilter('fork')}
+              className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 ${
+                homepageFilter === 'fork' ? 'bg-neutral-200 dark:bg-neutral-800' : 'hover:bg-neutral-100 dark:hover:bg-neutral-900'
+              }`}
+            >
+              <GitFork className="h-3 w-3" />
+              Fork Pages
+            </button>
+          </div>
+
           <div className="relative flex-1 w-full md:max-w-md md:ml-auto">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground " />
             <Input
@@ -147,6 +198,35 @@ export function GitHubOrgList({ orgsData, loading = false }: GitHubOrgListProps)
           </div>
         </div>
       </Card>
+
+      <HomepagesCard 
+        homepages={stats.homepages
+          .filter(homepage => {
+            // Apply search filter
+            const matchesSearch = 
+              homepage.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              homepage.orgName.toLowerCase().includes(searchQuery.toLowerCase());
+              
+            // Apply homepage type filter
+            const matchesHomepageFilter = 
+              homepageFilter === 'all' ||
+              (homepageFilter === 'source' && !homepage.isFork) ||
+              (homepageFilter === 'fork' && homepage.isFork);
+              
+            return matchesSearch && matchesHomepageFilter;
+          })
+          // Apply same sorting as repos
+          .sort((a, b) => {
+            switch (sortBy) {
+              case "name":
+                return a.name.localeCompare(b.name);
+              // Add other sort cases if needed
+              default:
+                return 0;
+            }
+          })
+        } 
+      />
 
       <Accordion 
         type="multiple" 

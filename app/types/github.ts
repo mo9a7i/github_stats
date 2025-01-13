@@ -30,6 +30,9 @@ export interface GitHubRepo {
     avatar_url: string;
     html_url: string;
   }>;
+  has_pages: boolean;
+  homepage: string | null;
+  owner: any;
   commits_count: number | null;
   languages_url: string;
   languages_stats?: Record<string, number>;  // bytes of code per language

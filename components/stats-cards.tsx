@@ -8,7 +8,8 @@ import {
   IssuesCard,
   LanguageBytesCard,
   DevelopmentTimeCard,
-  CoffeeCupsCard
+  CoffeeCupsCard,
+  HomepagesCard
 } from "./cards"
 
 interface StatsCardsProps {
@@ -49,6 +50,13 @@ interface StatsCardsProps {
       totalLines: number;
       totalHours: number;
     };
+    homepages: Array<{
+      name: string;
+      url: string;
+      isGitHubPages: boolean;
+      orgName: string;
+      isFork: boolean;
+    }>;
   };
 }
 

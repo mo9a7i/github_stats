@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GitBranch, GitPullRequest, Star, AlertCircle, GitCommit, Clock } from "lucide-react";
+import { GitBranch, GitPullRequest, Star, AlertCircle, GitCommit, Clock, Globe } from "lucide-react";
 import Link from "next/link";
 import { GitHubRepo as GitHubRepoType } from "@/app/types/github";
 
@@ -25,6 +25,20 @@ export function GitHubRepo({ repo }: GitHubRepoProps) {
                         {repo.name}
                         {repo.private && <span className="ml-2 text-xs bg-amber-200 text-amber-700 px-2 py-0.5 rounded">Private</span>}
                     </Link>
+                    {(repo.has_pages || repo.homepage) && (
+                        <Link
+                            href={repo.has_pages ? `https://${repo.owner.login}.github.io/${repo.name}/` : repo.homepage || '#'}
+                            target="_blank"
+                            className={`ml-2 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded ${
+                                repo.has_pages
+                                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-300'
+                                    : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-300'
+                            }`}
+                        >
+                            <Globe className="h-3 w-3" />
+                            {repo.has_pages ? 'GitHub Pages' : 'Homepage'}
+                        </Link>
+                    )}
                 </CardTitle>
                 <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-gray-500 flex items-center gap-1">
