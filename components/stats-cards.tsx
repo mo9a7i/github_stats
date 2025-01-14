@@ -8,8 +8,7 @@ import {
   IssuesCard,
   LanguageBytesCard,
   DevelopmentTimeCard,
-  CoffeeCupsCard,
-  HomepagesCard
+  CoffeeCupsCard
 } from "./cards"
 
 interface StatsCardsProps {
