@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatNumber } from "@/lib/utils";
 import { GitCommit } from "lucide-react"
 
 interface CommitsCardProps {
@@ -14,7 +15,7 @@ export function CommitsCard({ totalCommits, lastUpdated }: CommitsCardProps) {
         <GitCommit className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{totalCommits}</div>
+        <div className="text-5xl font-bold">{formatNumber(totalCommits)}</div>
         <p className="text-xs text-muted-foreground">
           Last updated {new Date(lastUpdated).toLocaleDateString()}
         </p>

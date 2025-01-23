@@ -26,9 +26,9 @@ export function GitHubOrg({ org }: GitHubOrgProps) {
     const repoCountStr = formatRepoCount(org.public_repos || 0, org.total_private_repos || 0, org.type || "Organization");
 
     return (
-        <AccordionItem className="dark:border-[#11044f]" value={org.login}>
+        <AccordionItem className="dark:border-[#11044f] dark:bg-[#040113] background-white border border-gray-200 px-4 rounded-md mb-2" value={org.login}>
             <AccordionTrigger>
-                <div className="w-full text-xl flex-col md:flex-row md:justify-between font-medium items-start md:items-center md:gap-2">
+                <div className="w-full decora text-xl flex-col md:flex-row md:justify-between font-medium items-start md:items-center md:gap-2">
                     <div className="flex items-center gap-2">
                         <Image src={org.avatar_url} alt={org.login} width={64} height={64} className="rounded-lg shadow-md bg-neutral-800" />
                         <div className="w-full items-start md:items-center flex flex-col md:flex-row md:justify-between">

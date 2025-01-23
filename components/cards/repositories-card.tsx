@@ -17,7 +17,7 @@ export function RepositoriesCard({ totalRepos, publicRepos, privateRepos }: Repo
         <GitBranch className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold" suppressHydrationWarning>{totalRepos}</div>
+        <div className="text-5xl font-bold" suppressHydrationWarning>{totalRepos}</div>
         <p className="text-xs text-muted-foreground">
           <span suppressHydrationWarning>{publicRepos} public, {privateRepos} private</span>
         </p>

@@ -1,15 +1,14 @@
 "use client";
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatNumber } from "@/lib/utils";
 import { Coffee } from "lucide-react";
 
 interface CoffeeCupsCardProps {
     totalHours: number;
 }
 
-function formatNumber(num: number): string {
-    return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
-}
+
 
 export function CoffeeCupsCard({ totalHours }: CoffeeCupsCardProps) {
     // 4 cups per 8-hour workday
@@ -23,7 +22,7 @@ export function CoffeeCupsCard({ totalHours }: CoffeeCupsCardProps) {
                 <Coffee className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                    <div className="text-2xl font-bold">{formatNumber(totalCups)} cups</div>
+                    <div className="text-5xl font-bold">{formatNumber(totalCups)} cups</div>
                     
             </CardContent>
             <CardFooter>

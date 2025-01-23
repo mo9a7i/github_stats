@@ -14,9 +14,9 @@ interface ContributorsCardProps {
 }
 
 export function ContributorsCard({ totalContributors, contributors }: ContributorsCardProps) {
-  const AVATAR_SIZE = "h-8 w-8";
-  const AVATAR_GROUP_CLASS = "flex flex-wrap -space-x-2 mt-2 overflow-visible";
-  const AVATAR_CLASS = `inline-block ${AVATAR_SIZE} rounded-full ring-2 ring-white hover:ring-neutral-200 transition-all bg-neutral-800`;
+  const AVATAR_SIZE = "h-6 w-6";
+  const AVATAR_GROUP_CLASS = "flex flex-wrap -space-x-1 mt-2 overflow-visible";
+  const AVATAR_CLASS = `inline-block ${AVATAR_SIZE} rounded-full ring-1 ring-white hover:ring-neutral-200 transition-all bg-neutral-800`;
 
   return (
     <Card className="bg-gray-50 dark:bg-[#040113] dark:border-[#0c0339]">
@@ -25,7 +25,7 @@ export function ContributorsCard({ totalContributors, contributors }: Contributo
         <Users className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{totalContributors}</div>
+        <div className="text-5xl font-bold">{totalContributors}</div>
         <div className={AVATAR_GROUP_CLASS}>
           {contributors.map((contributor) => (
             <Link

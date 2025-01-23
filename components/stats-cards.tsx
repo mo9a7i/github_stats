@@ -61,7 +61,7 @@ interface StatsCardsProps {
 
 export function StatsCards({ stats }: StatsCardsProps) {
   return (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-6">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4  mb-6">
       <RepositoriesCard 
         totalRepos={stats.totalRepos}
         publicRepos={stats.publicRepos}
@@ -84,16 +84,18 @@ export function StatsCards({ stats }: StatsCardsProps) {
 
       <IssuesCard totalIssues={stats.totalIssues} />
 
+      
+
+      <DevelopmentTimeCard totalLines={stats.developmentStats.totalLines} />
+
+      <CoffeeCupsCard totalHours={stats.developmentStats.totalHours} />
+
       <LanguagesCard languages={stats.languages} />
 
       <LanguageBytesCard 
         languages={stats.languageBytes.languages}
         totalBytes={stats.languageBytes.totalBytes}
       />
-
-      <DevelopmentTimeCard totalLines={stats.developmentStats.totalLines} />
-
-      <CoffeeCupsCard totalHours={stats.developmentStats.totalHours} />
     </div>
   )
 } 
