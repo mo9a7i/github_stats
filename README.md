@@ -2,7 +2,7 @@
 
 A powerful Next.js application that generates beautiful, interactive GitHub statistics dashboards for organizations and personal repositories.
 
-![6 Degrees Github Stats](https://mo9a7i.github.io/github_stats/assets/images/Screenshot 2025-01-23 132648.png)
+![6 Degrees Github Stats](https://mo9a7i.github.io/github_stats/assets/images/Screenshot-2025-01-23-132648.png)
 
 ## 🌟 Features
 
