@@ -85,7 +85,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Screenshots
 
-[Add screenshots of your dashboard here]
+### Main Statistics
+
+![Main Statistics](https://mo9a7i.github.io/github_stats/assets/images/Screenshot-2025-01-23-132648.png)
+
+### Repos with Homepages
+
+![Repos with Homepages](https://mo9a7i.github.io/github_stats/assets/images/Screenshot-2025-01-23-132732.png)
+
+### Repos Cards
+
+![Repos Cards](https://mo9a7i.github.io/github_stats/assets/images/Screenshot-2025-01-23-132745.png)
 
 ---
 
