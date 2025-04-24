@@ -27,23 +27,28 @@ A powerful Next.js application that generates beautiful, interactive GitHub stat
 ## 🚀 Quick Start
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/yourusername/github_stats.git
 cd github_stats
 ```
 
 2. **Install dependencies**
+  
 ```bash
 pnpm install
-```
+  ```
 
 3. **Set up environment variables**
+  
 Create a `.env` file in the root directory:
+
 ```env
 GH_TOKEN=your_github_personal_access_token
 ```
 
 4. **Run the development server**
+
 ```bash
 pnpm dev
 ```
